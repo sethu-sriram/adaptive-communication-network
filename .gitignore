@@ -1,6 +1,10 @@
 __pycache__/
 *.pyc
-results/
 *.log
 venv/
 *.zip
+
+# Ignore raw experiment data but track generated chart images
+results/*
+!results/*.png
+!results/.gitkeep
