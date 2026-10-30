@@ -1,0 +1,7 @@
+# Ensure shell scripts always have LF line endings on checkout
+*.sh text eol=lf
+
+# Python and markdown use system line endings
+*.py text
+*.md text
+*.txt text

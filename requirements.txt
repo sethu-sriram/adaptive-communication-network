@@ -1,0 +1,5 @@
+os-ken>=4.0      # SDN controller  (osken-manager)
+matplotlib
+pandas
+tabulate
+# system packages: mininet, openvswitch-switch (sudo apt install mininet openvswitch-switch)
