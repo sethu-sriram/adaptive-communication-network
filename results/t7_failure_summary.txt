@@ -1,0 +1,16 @@
+T7: 3 concurrent clients, 20 pps each, 30 s, link s1-s2 down for 5 s at t=10 s
+
+client | sent | delivered | lost | server unique | server dups | first pkt (s) | last pkt (s)
+-------+------+-----------+------+---------------+-------------+---------------+-------------
+     1 |  600 |       600 |    0 |           600 |           1 |           0.0 |         29.9
+     2 |  600 |       600 |    0 |           600 |           1 |           0.0 |         30.0
+     3 |  600 |       600 |    0 |           600 |           0 |           0.1 |         29.9
+
+concurrency: first packets of all clients within 0.1 s of each other; last packets within 0.1 s
+RESULT: PASS - all clients delivered every packet
+
+controller events during the run (seconds after the clients started):
+    10.0 s  LINK_DOWN        s1-s2  
+    10.1 s  PATH_INSTALLED   B      link-down s1-s2
+    15.6 s  LINK_UP          s1-s2  
+    15.6 s  PATH_INSTALLED   A      link-up s1-s2

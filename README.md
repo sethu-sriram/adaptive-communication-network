@@ -126,9 +126,11 @@ cp /tmp/t7_summary.txt results/t7_failure_summary.txt     # keep the output as e
 fails the link, and prints per-client sent/delivered/lost, the server's unique and duplicate counts, a concurrency
 check (first and last packets of all clients within the same second) and the controller events of the run.
 Measured result (VirtualBox VM): every client delivered all 600 packets with 0 lost, with and without the failure;
-in the failure run the controller logged `LINK_DOWN` and `PATH_INSTALLED B` at 10.1 s, `LINK_UP` and
-`PATH_INSTALLED A` at 15.5 s, and the server saw one duplicate datagram per client (a retransmission).
-Screenshot: `docs/screenshots/20_t7_three_clients_link_failure.png`.
+in the failure run the controller logged `LINK_DOWN` at 10.0 s, `PATH_INSTALLED B` at 10.1 s, and `LINK_UP` and
+`PATH_INSTALLED A` at 15.6 s, and the server saw one duplicate datagram from clients 1 and 2 and none from client 3
+(retransmissions; an earlier run gave one per client, so the count depends on timing). Saved output:
+`results/t7_nofailure_summary.txt` and `results/t7_failure_summary.txt`.
+Screenshots: `docs/screenshots/20_t7_three_clients_link_failure.png`, `docs/screenshots/21_t7_final_runs.png`.
 
 ## 5. Results and evidence
 
