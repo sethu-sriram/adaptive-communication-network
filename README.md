@@ -1,6 +1,5 @@
 # Project 30 – Adaptive Communication Network with Failure Recovery (UDP + SDN)
 
-> 📄 **Project Report:** [Project30_Report_Submission_Review.pdf](Project30_Report_Submission_Review.pdf)  
 > **Team 4:** Podili Sethu Sriram (PES1UG25AM555), Suryakoti Sunil Salunke (PES1UG25AM529), Vishal Sharanabasappa Dindi (PES1UG26AM823)
 
 
