@@ -1,0 +1,74 @@
+{"t": 1793014451.2375522, "event": "CONTROLLER_START", "mode": "adaptive"}
+{"t": 1793014455.2413619, "event": "SWITCH_UP", "switch": "s1"}
+{"t": 1793014455.3800604, "event": "SWITCH_UP", "switch": "s2"}
+{"t": 1793014455.575912, "event": "SWITCH_UP", "switch": "s3"}
+{"t": 1793014455.6195664, "event": "SWITCH_UP", "switch": "s4"}
+{"t": 1793014455.6211226, "event": "PATH_INSTALLED", "path": "A", "previous": null, "reason": "all-switches-connected", "install_ms": 0.71}
+{"t": 1793014456.5882502, "event": "FLOW_STATS", "switch": "s3", "packets": 0, "active": "A"}
+{"t": 1793014456.5910652, "event": "FLOW_STATS", "switch": "s4", "packets": 0, "active": "A"}
+{"t": 1793014456.5912552, "event": "FLOW_STATS", "switch": "s1", "packets": 0, "active": "A"}
+{"t": 1793014456.591389, "event": "FLOW_STATS", "switch": "s2", "packets": 0, "active": "A"}
+{"t": 1793014462.8434315, "event": "FLOW_STATS", "switch": "s1", "packets": 2, "active": "A"}
+{"t": 1793014462.8473456, "event": "FLOW_STATS", "switch": "s2", "packets": 2, "active": "A"}
+{"t": 1793014462.8476489, "event": "FLOW_STATS", "switch": "s4", "packets": 2, "active": "A"}
+{"t": 1793014464.888928, "event": "FLOW_STATS", "switch": "s2", "packets": 4, "active": "A"}
+{"t": 1793014464.8970892, "event": "FLOW_STATS", "switch": "s4", "packets": 4, "active": "A"}
+{"t": 1793014464.897311, "event": "FLOW_STATS", "switch": "s1", "packets": 4, "active": "A"}
+{"t": 1793014466.9010766, "event": "FLOW_STATS", "switch": "s4", "packets": 164, "active": "A"}
+{"t": 1793014466.901873, "event": "FLOW_STATS", "switch": "s1", "packets": 164, "active": "A"}
+{"t": 1793014466.9020348, "event": "FLOW_STATS", "switch": "s2", "packets": 164, "active": "A"}
+{"t": 1793014468.9174104, "event": "FLOW_STATS", "switch": "s4", "packets": 373, "active": "A"}
+{"t": 1793014468.919154, "event": "FLOW_STATS", "switch": "s1", "packets": 373, "active": "A"}
+{"t": 1793014468.9199455, "event": "FLOW_STATS", "switch": "s2", "packets": 373, "active": "A"}
+{"t": 1793014470.9348586, "event": "FLOW_STATS", "switch": "s1", "packets": 579, "active": "A"}
+{"t": 1793014470.9351013, "event": "FLOW_STATS", "switch": "s4", "packets": 582, "active": "A"}
+{"t": 1793014470.937805, "event": "FLOW_STATS", "switch": "s2", "packets": 582, "active": "A"}
+{"t": 1793014473.0048969, "event": "FLOW_STATS", "switch": "s4", "packets": 782, "active": "A"}
+{"t": 1793014473.0051942, "event": "FLOW_STATS", "switch": "s1", "packets": 783, "active": "A"}
+{"t": 1793014473.0052695, "event": "FLOW_STATS", "switch": "s2", "packets": 782, "active": "A"}
+{"t": 1793014474.7121778, "event": "LINK_DOWN", "link": "s1-s2", "active": "A"}
+{"t": 1793014474.735147, "event": "PATH_INSTALLED", "path": "B", "previous": "A", "reason": "link-down s1-s2", "install_ms": 8.03}
+{"t": 1793014474.9996238, "event": "FLOW_STATS", "switch": "s1", "packets": 1012, "active": "B"}
+{"t": 1793014475.001862, "event": "FLOW_STATS", "switch": "s2", "packets": 0, "active": "B"}
+{"t": 1793014475.0019412, "event": "FLOW_STATS", "switch": "s4", "packets": 1000, "active": "B"}
+{"t": 1793014475.002132, "event": "FLOW_STATS", "switch": "s3", "packets": 4, "active": "B"}
+{"t": 1793014477.0430582, "event": "FLOW_STATS", "switch": "s1", "packets": 1229, "active": "B"}
+{"t": 1793014477.043285, "event": "FLOW_STATS", "switch": "s4", "packets": 1220, "active": "B"}
+{"t": 1793014477.043416, "event": "FLOW_STATS", "switch": "s3", "packets": 222, "active": "B"}
+{"t": 1793014479.2496223, "event": "FLOW_STATS", "switch": "s4", "packets": 1428, "active": "B"}
+{"t": 1793014479.253657, "event": "FLOW_STATS", "switch": "s3", "packets": 429, "active": "B"}
+{"t": 1793014479.2538738, "event": "FLOW_STATS", "switch": "s1", "packets": 1438, "active": "B"}
+{"t": 1793014481.2878747, "event": "FLOW_STATS", "switch": "s3", "packets": 631, "active": "B"}
+{"t": 1793014481.288218, "event": "FLOW_STATS", "switch": "s4", "packets": 1629, "active": "B"}
+{"t": 1793014481.2902489, "event": "FLOW_STATS", "switch": "s1", "packets": 1640, "active": "B"}
+{"t": 1793014483.3162894, "event": "FLOW_STATS", "switch": "s1", "packets": 1840, "active": "B"}
+{"t": 1793014483.3178265, "event": "FLOW_STATS", "switch": "s4", "packets": 1828, "active": "B"}
+{"t": 1793014483.3251333, "event": "FLOW_STATS", "switch": "s3", "packets": 829, "active": "B"}
+{"t": 1793014485.3093653, "event": "LINK_UP", "link": "s1-s2", "active": "B"}
+{"t": 1793014485.3107717, "event": "PATH_INSTALLED", "path": "A", "previous": "B", "reason": "link-up s1-s2", "install_ms": 1.13}
+{"t": 1793014485.3177545, "event": "FLOW_STATS", "switch": "s4", "packets": 2068, "active": "A"}
+{"t": 1793014485.3178988, "event": "FLOW_STATS", "switch": "s3", "packets": 0, "active": "A"}
+{"t": 1793014485.3181005, "event": "FLOW_STATS", "switch": "s1", "packets": 2080, "active": "A"}
+{"t": 1793014487.3278296, "event": "FLOW_STATS", "switch": "s1", "packets": 2283, "active": "A"}
+{"t": 1793014487.3280416, "event": "FLOW_STATS", "switch": "s4", "packets": 2272, "active": "A"}
+{"t": 1793014487.331107, "event": "FLOW_STATS", "switch": "s2", "packets": 203, "active": "A"}
+{"t": 1793014489.3514295, "event": "FLOW_STATS", "switch": "s4", "packets": 2422, "active": "A"}
+{"t": 1793014489.3519337, "event": "FLOW_STATS", "switch": "s1", "packets": 2433, "active": "A"}
+{"t": 1793014489.352091, "event": "FLOW_STATS", "switch": "s2", "packets": 353, "active": "A"}
+{"t": 1793014491.3907106, "event": "FLOW_STATS", "switch": "s4", "packets": 2624, "active": "A"}
+{"t": 1793014491.3912406, "event": "FLOW_STATS", "switch": "s2", "packets": 605, "active": "A"}
+{"t": 1793014491.3914592, "event": "FLOW_STATS", "switch": "s1", "packets": 2685, "active": "A"}
+{"t": 1793014493.5326703, "event": "FLOW_STATS", "switch": "s2", "packets": 773, "active": "A"}
+{"t": 1793014493.5350373, "event": "FLOW_STATS", "switch": "s4", "packets": 2842, "active": "A"}
+{"t": 1793014493.5351691, "event": "FLOW_STATS", "switch": "s1", "packets": 2854, "active": "A"}
+{"t": 1793014495.566021, "event": "FLOW_STATS", "switch": "s4", "packets": 3022, "active": "A"}
+{"t": 1793014495.5676432, "event": "FLOW_STATS", "switch": "s1", "packets": 3033, "active": "A"}
+{"t": 1793014495.5728486, "event": "FLOW_STATS", "switch": "s2", "packets": 953, "active": "A"}
+{"t": 1793014495.751793, "event": "LINK_DOWN", "link": "s1-s2", "active": "A"}
+{"t": 1793014495.9018846, "event": "PATH_INSTALLED", "path": "B", "previous": "A", "reason": "link-down s1-s2", "install_ms": 149.84}
+{"t": 1793014496.04504, "event": "LINK_DOWN", "link": "s1-s3", "active": "B"}
+{"t": 1793014496.0452616, "event": "NO_PATH_AVAILABLE", "reason": "link-down s1-s3"}
+{"t": 1793014496.368918, "event": "LINK_DOWN", "link": "s2-s4", "active": "B"}
+{"t": 1793014496.3705888, "event": "NO_PATH_AVAILABLE", "reason": "link-down s2-s4"}
+{"t": 1793014496.6202207, "event": "LINK_DOWN", "link": "s3-s4", "active": "B"}
+{"t": 1793014496.6209462, "event": "NO_PATH_AVAILABLE", "reason": "link-down s3-s4"}

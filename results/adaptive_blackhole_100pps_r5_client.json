@@ -1,0 +1,36 @@
+{
+  "client_id": 1,
+  "start_epoch": 1793017225.6529033,
+  "rate_pps": 100.0,
+  "duration_s": 30.0,
+  "sent": 3000,
+  "delivered": 3000,
+  "lost": 0,
+  "delivery_ratio": 1.0,
+  "first_attempt_failures": 28,
+  "retransmissions": 74,
+  "latency_ms": {
+    "mean": 19.946285406748455,
+    "p50": 11.185646057128906,
+    "p95": 43.56980323791504,
+    "p99": 153.10907363891602,
+    "max": 553.2793998718262
+  },
+  "rtt_ms": {
+    "mean": 17.84935060966667,
+    "p50": 11.181556,
+    "p95": 41.700349
+  },
+  "max_ack_gap_ms": 285.60583400030737,
+  "nominal_interval_ms": 10.0,
+  "goodput_pps": 99.9330301854026,
+  "controller_notifications": 2,
+  "params": {
+    "rto": 0.1,
+    "retries": 5,
+    "backoff": 1.5,
+    "suspect_after": 3,
+    "suspect_silence": 0.25,
+    "no_notify": false
+  }
+}

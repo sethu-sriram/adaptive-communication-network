@@ -1,7 +1,7 @@
 # Project 30 – Adaptive Communication Network with Failure Recovery (UDP + SDN)
 
+> 📄 **Project Report:** [docs/Project30_Report.pdf](docs/Project30_Report.pdf)  
 > **Team 4:** Podili Sethu Sriram (PES1UG25AM555), Suryakoti Sunil Salunke (PES1UG25AM529), Vishal Sharanabasappa Dindi (PES1UG26AM823)
-
 
 A UDP application (client on h1, server on h2) runs over a Mininet network with two
 disjoint paths. An OS-Ken (OpenFlow 1.3) controller steers traffic over path A, detects
@@ -53,8 +53,14 @@ is declared lost; duplicate/late ACKs and malformed datagrams are ignored; serve
 
 ```bash
 sudo apt install mininet openvswitch-switch
+python3 -m venv venv && source venv/bin/activate     # the controller needs the venv (os-ken)
 pip install -r requirements.txt
+chmod +x run_all.sh                                    # needed after unzipping
+./run_tests.sh                                         # Mininet-free checks, about 20 s
 ```
+
+If `./run_all.sh` says *Permission denied* run the `chmod`; if the controller says
+*No module named os_ken* the venv is not active.
 
 ## 3. Run the demo manually (3 terminals)
 
@@ -88,7 +94,7 @@ python3 analyze.py      # -> results/runs.csv, summary.md (mean ± std), compari
 | Approach | **static** baseline (path A only, never reacts) vs **adaptive** (this project) |
 | Scenario | `none`, `linkdown` (s1–s2 down 10 s…20 s), `blackhole` (100 % loss on s1–s2) |
 | Load | 20 / 50 / 100 packets/s, 64-byte payload, 30 s |
-| Metrics | delivery ratio, packets lost, retransmissions, mean/p95/p99/max latency, **recovery time** (failure timestamp -> first packet sent after the failure that is ACKed on its first attempt), service interruption (longest ACK gap; reference only), goodput, controller reaction (`results/*_controller.jsonl`) |
+| Metrics | delivery ratio, packets lost, retransmissions, mean/p95/p99/max latency, **recovery time** (failure timestamp -> first later packet ACKed on its first attempt that is followed within 0.5 s by first-attempt successes for at least 80 % of the packets, see `analyze.py`), service interruption (longest ACK gap; reference only), goodput, controller reaction (`results/*_controller.jsonl`) |
 
 ### Test cases
 
@@ -100,11 +106,29 @@ python3 analyze.py      # -> results/runs.csv, summary.md (mean ± std), compari
 | T4 | `link s1 s2 up` | `LINK_UP` → `PATH_INSTALLED A` |
 | T5 | Silent 100 % loss on s1–s2 | adaptive: `PATH_SUSPECTED` + reroute within ~hundreds of ms; static: stalls |
 | T6 | Fail s3–s4 while on A | no reroute, no packet disturbance |
-| T7 | Several clients (`--clients 3` in `experiment.py`) | all served concurrently, per-client stats on server |
+| T7 | Three concurrent clients (`sudo python3 demo_t7.py [--fail]`, see below) | all served concurrently, per-client stats on server |
 | T8 | Both paths down | `NO_PATH_AVAILABLE`, no crash; recovery when a link returns |
 
-Mininet-free tests (run anywhere): `python3 tests/test_loopback.py` and
-`python3 tests/test_controller_logic.py`.
+Mininet-free tests (run anywhere): `./run_tests.sh` (runs `tests/test_loopback.py` and
+`tests/test_controller_logic.py`).
+
+### T7 – three concurrent clients
+
+Start the controller in one terminal (`python3 run_controller.py controller.py --port 6653`), then:
+
+```bash
+sudo /usr/bin/python3 demo_t7.py            # 3 clients x 20 pps x 30 s, no failure
+sudo /usr/bin/python3 demo_t7.py --fail     # link s1-s2 goes down at t = 10 s and up again 5 s later
+cp /tmp/t7_summary.txt results/t7_failure_summary.txt     # keep the output as evidence
+```
+
+`demo_t7.py` builds the topology, starts the server on h2, launches the clients on h1 back-to-back, optionally
+fails the link, and prints per-client sent/delivered/lost, the server's unique and duplicate counts, a concurrency
+check (first and last packets of all clients within the same second) and the controller events of the run.
+Measured result (VirtualBox VM): every client delivered all 600 packets with 0 lost, with and without the failure;
+in the failure run the controller logged `LINK_DOWN` and `PATH_INSTALLED B` at 10.1 s, `LINK_UP` and
+`PATH_INSTALLED A` at 15.5 s, and the server saw one duplicate datagram per client (a retransmission).
+Screenshot: `docs/screenshots/20_t7_three_clients_link_failure.png`.
 
 ## 5. Results and evidence
 
@@ -181,14 +205,14 @@ Charts: `results/delivery_ratio.png`, `recovery_time.png`, `recovery_vs_rate.png
 
 * One run (`adaptive_linkdown_50pps_r3`) was discarded and repeated: its maximum latency (about 11 s) is impossible with a 1.4 s retry window, so the client process/VM had been stalled; the original files are kept in `results/discarded/`. The controller log of that run shows a normal reroute.
 * The recovery metric requires a *sustained* first-attempt recovery: in an earlier version, packets that slipped through while `tc` was being reconfigured made 3 of 15 static black-hole runs look recovered after under 130 ms although their ACK gap (about 10 s) and delivery (about 70 %) show they did not. The metric was corrected and all runs re-analysed from the saved per-packet logs; no experiment was repeated for this reason.
+* In 3 of the 15 adaptive no-failure runs (`adaptive_none_20pps_r2`, `adaptive_none_50pps_r3`, `adaptive_none_100pps_r3`) a client report, sent although nothing had failed, moved the traffic to path B; delivery stayed at 100 %. All 30 adaptive failure runs were checked and none had an early reroute. Re-check with `python3 check_startup_reroutes.py`.
 
 
 ## 6. Test and validation checklist
 
 ```bash
-python3 tests/test_loopback.py
-python3 tests/test_controller_logic.py
-python3 -m py_compile controller.py client.py server.py protocol.py topology.py experiment.py analyze.py
+./run_tests.sh          # syntax check + controller logic + loopback tests
+python3 check_startup_reroutes.py   # spurious / early reroutes in the saved results
 ```
 
 For silent-loss validation, confirm `APP_REPORT report=PATH_SUSPECT`, `PATH_SUSPECTED path=A`, and `PATH_INSTALLED path=B` in the controller log. If only the first appears, inspect `APP_REPORT_STALE`; if no report appears, verify both processes use the same `P30_SOCK`. Static mode is intentionally a non-reactive baseline.
@@ -198,3 +222,21 @@ For silent-loss validation, confirm `APP_REPORT report=PATH_SUSPECT`, `PATH_SUSP
   `--controller-port`), or started without `--observe-links`.
 * Stale state: `sudo mn -c`. Re-run controller per experiment (`run_all.sh` does this).
 * Hosts can't use the UNIX socket: it needs `/tmp` shared (default Mininet).
+* `bash: ./run_all.sh: Permission denied` -> `chmod +x run_all.sh`. `ModuleNotFoundError: os_ken` -> `source venv/bin/activate`.
+* The controller log must exist before you `tail` it: start a run first (`results/<run>_controller.log`).
+
+## 8. Repository layout
+
+| Path | Purpose |
+|---|---|
+| `protocol.py`, `server.py`, `client.py` | UDP application: 18-byte header, ACK server with worker pool, client with retransmission and controller reports |
+| `controller.py`, `run_controller.py` | OS-Ken OpenFlow 1.3 controller (adaptive and static mode); launcher for OS-Ken 4.2.2 |
+| `topology.py` | Mininet topology: h1, h2 and s1-s4, two disjoint paths |
+| `experiment.py`, `run_all.sh` | One automated run / the full 90-run sweep |
+| `analyze.py`, `make_report.py` | Tables, charts and the README results section from `results/` |
+| `demo_t7.py` | T7: three concurrent clients, optional link failure |
+| `check_startup_reroutes.py` | Finds early or spurious application-report reroutes in the saved logs |
+| `run_tests.sh`, `tests/` | Mininet-free tests |
+| `results/` | Raw per-run data, controller logs, tables, charts (`discarded/` = the repeated run) |
+| `docs/` | Project report (PDF) and the screenshots used in it |
+| `CHANGES.md`, `RESULTS.md` | Problems found and fixed; generated results section |

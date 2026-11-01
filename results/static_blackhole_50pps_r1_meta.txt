@@ -1,0 +1,1 @@
+scenario=blackhole fail_at=10.0 fail_for=10.0 link=s1,s2 fail_epoch=1793013359.738674 restore_epoch=1793013369.8378143

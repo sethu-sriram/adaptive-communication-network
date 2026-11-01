@@ -129,6 +129,9 @@ w('* The recovery metric requires a *sustained* first-attempt recovery: in an ea
   'through while `tc` was being reconfigured made 3 of 15 static black-hole runs look recovered after under 130 ms '
   'although their ACK gap (about 10 s) and delivery (about 70 %) show they did not. The metric was corrected and all runs '
   're-analysed from the saved per-packet logs; no experiment was repeated for this reason.')
+w('* In 3 of the 15 adaptive no-failure runs (`adaptive_none_20pps_r2`, `adaptive_none_50pps_r3`, `adaptive_none_100pps_r3`) '
+  'a client report, sent although nothing had failed, moved the traffic to path B; delivery stayed at 100 %. All 30 '
+  'adaptive failure runs were checked and none had an early reroute. Re-check with `python3 check_startup_reroutes.py`.')
 w('')
 
 text = '\n'.join(L)

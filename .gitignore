@@ -5,8 +5,5 @@ venv/
 *.zip
 *.docx
 ~$*
-
-# Ignore raw experiment data but track generated chart images
-results/*
-!results/*.png
-!results/.gitkeep
+# results/ is tracked on purpose (per-run CSV/JSON, controller JSONL logs, tables, charts):
+# the README embeds the charts and the report cites the logs. Only raw stdout *.log files are ignored.
