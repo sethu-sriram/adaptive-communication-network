@@ -3,6 +3,8 @@ __pycache__/
 *.log
 venv/
 *.zip
+*.docx
+~$*
 
 # Ignore raw experiment data but track generated chart images
 results/*
