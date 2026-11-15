@@ -13,8 +13,35 @@ controller** when it suspects a dead path, so the two layers cooperate.
     h1 - s1               s4 - h2     Path B (backup)   : h1 - s1 - s3 - s4 - h2
             +---- s3 ----+            links: 10 Mbit/s, 2 ms delay
 ```
+## 1. Problem Statement
 
-## 1. Architecture and communication flow
+Traditional network forwarding may fail when a communication link
+or network path becomes unavailable. Static forwarding configurations
+do not automatically adapt to such failures, which can result in
+packet loss, communication interruptions and reduced network reliability.
+
+An additional challenge is silent packet loss (blackhole failure),
+where packets are dropped even though the network interface may
+still appear operational. Such failures may not generate normal
+link-down notifications.
+
+This project addresses these problems by developing an adaptive
+SDN-based communication network that detects link failures and
+application-level packet loss, then reroutes traffic through an
+available alternate path.
+
+## 2. Project Objectives
+
+- Design a two-path network using Mininet and Open vSwitch.
+- Implement an SDN controller using OS-Ken and OpenFlow 1.3.
+- Establish UDP communication between two hosts.
+- Implement acknowledgements and retransmissions at the application layer.
+- Detect hard link failures and silent packet-loss conditions.
+- Automatically switch traffic to an available backup path.
+- Evaluate network performance by comparing static and adaptive modes.
+- Test concurrent UDP clients under normal and failure conditions.
+
+## 3. Architecture and communication flow
 
 | Component | File | Role |
 |---|---|---|
@@ -49,7 +76,7 @@ controller** when it suspects a dead path, so the two layers cooperate.
 **Application-level recovery**: ACK per datagram, RTO 100 ms × 1.5^attempt, 5 retries, then the packet
 is declared lost; duplicate/late ACKs and malformed datagrams are ignored; server de-duplicates retransmits.
 
-## 2. Setup (Ubuntu, Python ≥ 3.8)
+## 4. Setup (Ubuntu, Python ≥ 3.8)
 
 ```bash
 sudo apt install mininet openvswitch-switch
@@ -62,7 +89,7 @@ chmod +x run_all.sh                                    # needed after unzipping
 If `./run_all.sh` says *Permission denied* run the `chmod`; if the controller says
 *No module named os_ken* the venv is not active.
 
-## 3. Run the demo manually (3 terminals)
+## 5. Run the demo manually (3 terminals)
 
 ```bash
 # T1 – controller (adaptive)                       # baseline: P30_MODE=static
@@ -81,7 +108,7 @@ mininet> link s1 s2 up                                    # LINK_UP, PATH_INSTAL
 Silent failure demo: `mininet> sh tc qdisc replace dev s1-eth2 root netem loss 100%` (and `s2-eth1`)
 – the interface stays up, yet the controller log shows `APP_REPORT … PATH_SUSPECTED … PATH_INSTALLED B`.
 
-## 4. Reproduce the evaluation
+## 6. Reproduce the evaluation
 
 ```bash
 ./run_all.sh            # 2 modes x 3 scenarios x 3 rates x 5 repetitions = 90 runs (~70 min); QUICK=1: 50 pps only (~25 min)
@@ -132,16 +159,16 @@ in the failure run the controller logged `LINK_DOWN` at 10.0 s, `PATH_INSTALLED 
 `results/t7_nofailure_summary.txt` and `results/t7_failure_summary.txt`.
 Screenshots: `docs/screenshots/20_t7_three_clients_link_failure.png`, `docs/screenshots/21_t7_final_runs.png`.
 
-## 5. Results and evidence
+## 7. Results and evidence
 
-### 5.1 Experimental setup
+### 7.1 Experimental setup
 Two-path Mininet topology (10 Mbit/s, 2 ms links), OpenFlow 1.3 controller (OS-Ken), UDP client/server with ACK + retransmission (RTO 100 ms x1.5 backoff, 5 retries). Each configuration was run **5 times** (90 runs in total) for loads of 20, 50, 100 packets/s; a run lasts 30 s with the failure injected at t = 10 s and removed at t = 20 s on link s1-s2 (path A). **Baseline** = static mode (controller installs path A once and never reacts). **Adaptive** = this project (link-event detection + application reports). Values are mean ± standard deviation over runs.
 
 Scenarios: `none` (no failure), `linkdown` (interface down, generates link events), `blackhole` (100 % loss, interface stays up: **no** link event, only the application can notice).
 
 Metrics: delivery ratio, retransmissions, p95 delivery latency (first send -> ACK), **recovery time** (failure -> first packet of a sustained first-attempt-ACKed run, see `analyze.py`), longest ACK gap, goodput.
 
-### 5.2 Adaptive vs static (all loads pooled)
+### 7.2 Adaptive vs static (all loads pooled)
 
 | Scenario | Metric | Adaptive | Static |
 |---|---|---|---|
@@ -157,7 +184,7 @@ Metrics: delivery ratio, retransmissions, p95 delivery latency (first send -> AC
 | blackhole | p95 latency (ms) | 54 ± 18 | 457 ± 76 |
 | blackhole | retransmissions / run | 47 ± 43 | 2808 ± 1693 |
 
-### 5.3 Results per load
+### 7.3 Results per load
 
 | Scenario | pps | Mode | Delivery % | Lost | Retrans. | p95 lat (ms) | Recovery (ms) | Longest ACK gap (ms) |
 |---|---|---|---|---|---|---|---|---|
@@ -187,7 +214,7 @@ Charts: `results/delivery_ratio.png`, `recovery_time.png`, `recovery_vs_rate.png
 ![timeline_blackhole](results/timeline_blackhole.png)
 ![timeline_linkdown](results/timeline_linkdown.png)
 
-### 5.4 Findings
+### 7.4 Findings
 
 1. **Hard failure (link down).** Adaptive delivered 100.0 % of packets versus 70.8 % for static and recovered in 124 ms versus 10174 ms (about 82x faster). Static only works again when the failure itself ends; adaptive restores service on the backup path while the failure is still present.
 2. **Silent failure (black-hole).** Adaptive delivered 100.0 % of packets versus 70.4 % for static and recovered in 390 ms versus 10320 ms (about 26x faster). Static only works again when the failure itself ends; adaptive restores service on the backup path while the failure is still present.
@@ -195,7 +222,7 @@ Charts: `results/delivery_ratio.png`, `recovery_time.png`, `recovery_vs_rate.png
 4. **No cost in normal operation.** Without failures both modes deliver the same share of packets (difference +0.00 percentage points); differences in latency and retransmissions are within VM jitter.
 5. **Cost of application-level recovery grows with load.** In the black-hole case adaptive needs on average 11 retransmissions at 20 pps, 36 retransmissions at 50 pps, 94 retransmissions at 100 pps; static needs 995 to 4958 and still loses about 30 % of the packets.
 
-### 5.5 Limits and design trade-offs
+### 7.5 Limits and design trade-offs
 
 * The application can mask an outage only up to about RTO x retries (about 1.4 s); longer outages need the controller to reroute first, which is exactly what the application report triggers.
 * After a silent failure there is no link-up event, so the controller returns to path A only when the 20 s hold-down (`P30_SUSPECT_HOLD`) expires: a short hold-down returns sooner but risks flapping, a long one keeps traffic on the backup path longer.
@@ -203,14 +230,14 @@ Charts: `results/delivery_ratio.png`, `recovery_time.png`, `recovery_vs_rate.png
 * Only one failure at a time on the s1-s2 link was evaluated; two simultaneous failures are covered by the logic tests (`NO_PATH_AVAILABLE`) but were not measured.
 * Results come from one VirtualBox VM; scheduling jitter adds noise (visible in the `none` rows). Absolute numbers will differ on other machines; the relative comparison is the result.
 
-### 5.6 Data-quality notes
+### 7.6 Data-quality notes
 
 * One run (`adaptive_linkdown_50pps_r3`) was discarded and repeated: its maximum latency (about 11 s) is impossible with a 1.4 s retry window, so the client process/VM had been stalled; the original files are kept in `results/discarded/`. The controller log of that run shows a normal reroute.
 * The recovery metric requires a *sustained* first-attempt recovery: in an earlier version, packets that slipped through while `tc` was being reconfigured made 3 of 15 static black-hole runs look recovered after under 130 ms although their ACK gap (about 10 s) and delivery (about 70 %) show they did not. The metric was corrected and all runs re-analysed from the saved per-packet logs; no experiment was repeated for this reason.
 * In 3 of the 15 adaptive no-failure runs (`adaptive_none_20pps_r2`, `adaptive_none_50pps_r3`, `adaptive_none_100pps_r3`) a client report, sent although nothing had failed, moved the traffic to path B; delivery stayed at 100 %. All 30 adaptive failure runs were checked and none had an early reroute. Re-check with `python3 check_startup_reroutes.py`.
 
 
-## 6. Test and validation checklist
+## 8. Test and validation checklist
 
 ```bash
 ./run_tests.sh          # syntax check + controller logic + loopback tests
@@ -219,7 +246,7 @@ python3 check_startup_reroutes.py   # spurious / early reroutes in the saved res
 
 For silent-loss validation, confirm `APP_REPORT report=PATH_SUSPECT`, `PATH_SUSPECTED path=A`, and `PATH_INSTALLED path=B` in the controller log. If only the first appears, inspect `APP_REPORT_STALE`; if no report appears, verify both processes use the same `P30_SOCK`. Static mode is intentionally a non-reactive baseline.
 
-## 7. Troubleshooting
+## 9. Troubleshooting
 * `h1 cannot reach h2`: controller not running, wrong port (`--ofp-tcp-listen-port 6653` must match
   `--controller-port`), or started without `--observe-links`.
 * Stale state: `sudo mn -c`. Re-run controller per experiment (`run_all.sh` does this).
@@ -227,7 +254,7 @@ For silent-loss validation, confirm `APP_REPORT report=PATH_SUSPECT`, `PATH_SUSP
 * `bash: ./run_all.sh: Permission denied` -> `chmod +x run_all.sh`. `ModuleNotFoundError: os_ken` -> `source venv/bin/activate`.
 * The controller log must exist before you `tail` it: start a run first (`results/<run>_controller.log`).
 
-## 8. Repository layout
+## 10. Repository layout
 
 | Path | Purpose |
 |---|---|
