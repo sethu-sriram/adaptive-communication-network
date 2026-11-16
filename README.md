@@ -2,6 +2,8 @@
 
 > 📄 **Project Report:** [docs/Project30_Report.pdf](docs/Project30_Report.pdf)  
 > **Team 4:** Podili Sethu Sriram (PES1UG25AM555), Suryakoti Sunil Salunke (PES1UG25AM529), Vishal Sharanabasappa Dindi (PES1UG26AM823)
+>
+> ✅ **Evaluation checklist:** see [DELIVERABLES.md](DELIVERABLES.md) for where each rubric item is implemented and evidenced.
 
 A UDP application (client on h1, server on h2) runs over a Mininet network with two
 disjoint paths. An OS-Ken (OpenFlow 1.3) controller steers traffic over path A, detects
